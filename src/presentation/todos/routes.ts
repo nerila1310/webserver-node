@@ -7,6 +7,7 @@ export class TodoRoutes {
     const toDoController = new TodosController();
 
     // ? Routes
+    router.get("/:id", toDoController.getTodoById);
     router.get("/", toDoController.getTodos);
 
     return router;
