@@ -23,15 +23,17 @@ export class Server {
   async start() {
     console.log("Server started...");
 
-    //? Middleware
+    // >> Middleware
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
 
-    //? Public Folder
+    // >> Public Folder
     this.app.use(express.static("./public"));
 
-    //? Routes
+    // >> Routes
     this.app.use(this.routes);
 
-    // ? SPA
+    // >> SPA
     this.app.get("/{*splat}", (req, res) => {
       const indexPath = path.join(
         __dirname,

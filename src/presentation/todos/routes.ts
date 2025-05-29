@@ -9,6 +9,7 @@ export class TodoRoutes {
     // ? Routes
     router.get("/:id", toDoController.getTodoById);
     router.get("/", toDoController.getTodos);
+    router.post("/", toDoController.createTodo);
 
     return router;
   }
