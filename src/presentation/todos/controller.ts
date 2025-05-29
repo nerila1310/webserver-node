@@ -5,19 +5,19 @@ const todos = [
     id: 1,
     title: "Learn Node.js",
     completed: false,
-    createdAt: new Date()
+    completedAt: new Date()
   },
   {
     id: 2,
     title: "Build a REST API",
     completed: true,
-    createdAt: null
+    completedAt: null
   },
   {
     id: 3,
     title: "Deploy to Heroku",
     completed: false,
-    createdAt: new Date()
+    completedAt: new Date()
   }
 ];
 
@@ -58,11 +58,41 @@ export class TodosController {
       id: todos.length + 1,
       title,
       completed: false,
-      createdAt: null
+      completedAt: null
     };
 
     todos.push(newTodo);
 
     res.json(newTodo);
+  };
+
+  // >> Actualiza un toDo basado en el ID
+  public updateTodo = (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      res.status(400).json({ error: "Invalid ID format" });
+      return;
+    }
+
+    const todo = todos.find(todo => todo.id === id);
+    if (!todo) {
+      res.status(404).json({ error: `Todo with id ${id} not found` });
+      return;
+    }
+
+    const { title, completed } = req.body;
+
+    if (!title) {
+      res.status(400).json({ error: "Title is required" });
+      return;
+    } else todo.title = title;
+
+    if (!completed) {
+      res.status(400).json({ error: "Complete is required" });
+      return;
+    } else todo.completed = Boolean(completed);
+
+    res.json(todo);
   };
 }
