@@ -95,4 +95,25 @@ export class TodosController {
 
     res.json(todo);
   };
+
+  // >> Elimina un toDo basado en el ID
+  public deleteTodo = (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      res.status(400).json({ error: "Invalid ID format" });
+      return;
+    }
+
+    const index = todos.findIndex(todo => todo.id === id);
+
+    if (index === -1) {
+      res.status(404).json({ error: `Todo with id ${id} not found` });
+      return;
+    }
+
+    const deletedTodo = todos[index];
+    todos.splice(index, 1);
+    res.json(deletedTodo);
+  };
 }
