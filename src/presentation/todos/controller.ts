@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../../data/postgres";
+import { CreateTodoDto } from "../../domain/dtos";
 
 export class TodosController {
   // >> Retorna todos los ToDo's
@@ -32,16 +33,15 @@ export class TodosController {
 
   // >> Crea un nuevo ToDo
   public createTodo = async (req: Request, res: Response) => {
-    const { title } = req.body;
-    if (!title) {
-      res.status(400).json({ error: "Title is required" });
+    const [error, createTodoDto] = CreateTodoDto.create(req.body);
+
+    if (error) {
+      res.status(400).json({ error });
       return;
     }
 
     const todo = await prisma.todo.create({
-      data: {
-        title
-      }
+      data: createTodoDto!
     });
 
     res.json(todo);
