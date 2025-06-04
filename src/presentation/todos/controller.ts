@@ -5,7 +5,9 @@ import { CreateTodoDto, UpdateTodoDto } from "../../domain/dtos";
 export class TodosController {
   // >> Retorna todos los ToDo's
   public getTodos = async (req: Request, res: Response) => {
-    const todos = await prisma.todo.findMany();
+    const todos = await prisma.todo.findMany({
+      orderBy: { id: "asc" }
+    });
 
     res.json(todos);
     return;
