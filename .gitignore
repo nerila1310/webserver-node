@@ -1,7 +1,9 @@
-node_modules/
-keys/
+/node_modules
+react-app-router.zip
+/keys
 /postgres
-dist/
 
 .env
-react-app-router.zip
+/src/generated/prisma
+
+/dist
