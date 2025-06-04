@@ -5,3 +5,5 @@ react-app-router.zip
 
 .env
 /src/generated/prisma
+
+/dist
