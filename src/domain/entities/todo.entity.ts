@@ -24,6 +24,6 @@ export class TodoEntity {
       }
     }
 
-    return new TodoEntity(id, title, completed, newCompletedAt);
+    return new TodoEntity(id, title, completed, newCompletedAt || null);
   }
 }

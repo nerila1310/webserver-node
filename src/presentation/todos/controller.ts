@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { prisma } from "../../data/postgres";
 import { CreateTodoDto, UpdateTodoDto } from "../../domain/dtos";
+import { TodoRepository } from "../../domain";
 
 export class TodosController {
+  constructor(private readonly todoRepository: TodoRepository) {}
+
   // >> Retorna todos los ToDo's
   public getTodos = async (req: Request, res: Response) => {
-    const todos = await prisma.todo.findMany({
-      orderBy: { id: "asc" }
-    });
+    const todos = await this.todoRepository.getAll();
 
     res.json(todos);
     return;
@@ -22,15 +23,13 @@ export class TodosController {
       return;
     }
 
-    const todo = await prisma.todo.findFirst({
-      where: { id }
-    });
-
-    todo
-      ? res.json(todo)
-      : res.status(404).json({ error: `Todo with id ${id} not found` });
-
-    return;
+    try {
+      const todo = await this.todoRepository.findById(id);
+      res.json(todo);
+      return;
+    } catch (error) {
+      res.status(400).json({ error });
+    }
   };
 
   // >> Crea un nuevo ToDo
@@ -42,11 +41,9 @@ export class TodosController {
       return;
     }
 
-    const todo = await prisma.todo.create({
-      data: createTodoDto!
-    });
+    const newTodo = await this.todoRepository.create(createTodoDto!);
 
-    res.json(todo);
+    res.json(newTodo);
   };
 
   // >> Actualiza un toDo basado en el ID
@@ -62,21 +59,12 @@ export class TodosController {
       return;
     }
 
-    const todo = await prisma.todo.findFirst({
-      where: { id }
-    });
-
-    if (!todo) {
-      res.status(404).json({ error: `Todo with id ${id} not found` });
-      return;
+    try {
+      const updatedTodo = await this.todoRepository.updateById(updateTodoDto!);
+      res.json(updatedTodo);
+    } catch (error) {
+      res.status(400).json({ error });
     }
-
-    const updatedTodo = await prisma.todo.update({
-      where: { id },
-      data: updateTodoDto!.values
-    });
-
-    res.json(updatedTodo);
   };
 
   // >> Elimina un toDo basado en el ID
@@ -88,23 +76,12 @@ export class TodosController {
       return;
     }
 
-    const todo = await prisma.todo.findFirst({
-      where: { id }
-    });
-
-    if (!todo) {
-      res.status(404).json({ error: `Todo with id ${id} not found` });
+    try {
+      const deletedTodo = await this.todoRepository.deleteById(id);
+      res.json(deletedTodo);
       return;
+    } catch (error) {
+      res.status(400).json({ error });
     }
-
-    const deletedTodo = await prisma.todo.delete({
-      where: { id }
-    });
-
-    deletedTodo
-      ? res.json(deletedTodo)
-      : res
-          .status(400)
-          .json({ error: `Todo with id ${id} could not be deleted` });
   };
 }
